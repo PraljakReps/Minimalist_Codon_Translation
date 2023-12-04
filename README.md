@@ -1,2 +1,2 @@
 # Minimalist_Codon_Translation
-Curiosity of Bryan Phillips, the most minimalist code for reverse aa translation and specie codon optimization. 
+A special shoutout to Bryan Phillips for generously sharing his repository containing minimalist code for reverse amino acid translation and species-specific codon optimization.
