@@ -8,10 +8,11 @@ Created on Mon Oct 18 13:16:01 2021
 """
 
 from optparse import OptionParser
-import DNA_tools as dt
+import source.DNA_tools as dt
 import robustness_tools_072921 as rt # what is this? 
 import random
 import sys
+import source.DNA_assembly_tools as assembly_dt
 
 def set_seed(args: any) -> None:
     random.seed(args.seed)
@@ -21,11 +22,14 @@ def get_args(parser: any) -> None:
     
     parser.add_argument('--input', default=None, type=str,
             help='fasta with your protein sequence of interest')
-    parser.add_argument('--output', default=None, type=str,
+    parser.add_argument('--output', default=none, type=str,
             help='fasta with your optimized sequence')
+    parser.add_argument('--lim_GC_high', default=0.6, type=float,
+            help='GC content too high limit.')
+    parser.add_argument('--lim_GC_low', default=0.45, type=float,
+            help='GC content too low limit.')
 
     return parser
-
 
 #################
 # Main function #
@@ -36,9 +40,30 @@ def run_main(args: any) -> None:
     # get protein sequence and DNA sequences
     seq_name, DNA_seq = dt.read_fasta(args.input)
     
+    # adjust the G-C content of a given DNA sequence...
+    # ensure it falls within the specified limits lim_GC_high and lim_GC_low
+    DNA_seq = assembly_dt.fix_GC(
+            seq=DNA_seq,
+            lim_high=args.lim_GC_high,
+            lim_low=args.lim_GC_low
+    )
+
+    # process a DNA sequence to disrupt microhomologoues sequences
+    # microhomology -> refers to the occurence of short, repeated DNA sequences within a longer DNA sequence
+    DNA_seq = assembly_dt.strip_microhomology(seq=DNA_seq)
+
+    # process DNA sequence and modify it by identifying and altering mononucleotide tracts...
+    # mononucleoditde tract -> sequence where the same nucleotide is repeated multiple times in a row (e.g. "AAAAA", "CCCCC", etc.)...
+    DNA_seq = assembly_dt.strip_mononucleotide_tracts(seq=DNA_seq)
+
+    # process DNA sequence and modify it in a way that breaks up any occurences of the triplet "GGG" (i.e. remove G-quadruplex)...
+    DNA_seq = assembly_dt.strip_G_quadruplexes(seq=DNA_seq)
+        
+    with open(args.output, 'w+') as fasta_out:
+        fasta_out.write(">%s\n%s" % (seq_name, DNA_seq))
 
 
-
+    print('Finished running AA reverse translation, DNA assembly, and Codon optimization')
     
 
 
