@@ -9,10 +9,13 @@ Created on Mon Oct 18 13:16:01 2021
 
 from optparse import OptionParser
 import source.DNA_tools as dt
-import robustness_tools_072921 as rt # what is this? 
+import source.robustness_tools_072921 as rt # what is this? 
 import random
 import sys
 import source.DNA_assembly_tools as assembly_dt
+
+
+
 
 def set_seed(args: any) -> None:
     random.seed(args.seed)
@@ -21,9 +24,11 @@ def set_seed(args: any) -> None:
 def get_args(parser: any) -> None:
     
     parser.add_argument('--input', default=None, type=str,
-            help='fasta with your protein sequence of interest')
+            help='fasta with your protein sequence of interest.')
     parser.add_argument('--output', default=none, type=str,
-            help='fasta with your optimized sequence')
+            help='fasta with your optimized sequence.')
+    parser.add_argument('--codon_bias_path', default=None, type=str,
+            help='path to the codon frequency.')
     parser.add_argument('--lim_GC_high', default=0.6, type=float,
             help='GC content too high limit.')
     parser.add_argument('--lim_GC_low', default=0.45, type=float,
@@ -37,9 +42,15 @@ def get_args(parser: any) -> None:
 
 def run_main(args: any) -> None:
 
-    # get protein sequence and DNA sequences
+    # get protein sequence and DNA sequences...
     seq_name, DNA_seq = dt.read_fasta(args.input)
-    
+   
+    # optimize Codons based on specie frequency...
+    DNA_seq = assembly_dt.codon_optimzie(
+            seq=DNA_seq,
+            codon_bias=args.codon_bias_path
+    )
+
     # adjust the G-C content of a given DNA sequence...
     # ensure it falls within the specified limits lim_GC_high and lim_GC_low
     DNA_seq = assembly_dt.fix_GC(
@@ -77,7 +88,6 @@ if __name__ == "__main__":
 
     # for reproducibility
     set_seed(args=args)
-
         
     # run DNA assembly and Codon optimizatipm
     run_main(args=args)

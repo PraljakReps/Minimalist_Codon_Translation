@@ -10,6 +10,7 @@ import sys
 import numpy
 import random
 import os
+
 translation_table = {    
     'ACC': "T", 'ATG': "M", 'ACA': "T", 
     'ACG': "T", 'ATC': "I", 'AAC': "N", 

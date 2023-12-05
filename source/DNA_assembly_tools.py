@@ -6,6 +6,8 @@ Created on Mon Oct 18 13:16:01 2021
 @author: bryanandrews1
 """
 
+import robustness_tools_072921.py as rt
+import DNA_tools as dt 
 
 ######################
 # Codon optimization #
