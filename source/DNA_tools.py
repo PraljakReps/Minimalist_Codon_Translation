@@ -87,24 +87,70 @@ def PCR(template, primer1, primer2, min_anneal_len = 14):
         index_start = template.find(primer1.upper()[0-min_anneal_len:])+min_anneal_len
         index_end = template.find(primer2.upper()[:min_anneal_len])
         return(primer1 + template[index_start:index_end] + primer2)
-    
-def read_fasta(fasta_file):
-    with open(fasta_file, "r") as file_in:
-        read_next_line = False
-        seq_list = []
-        for line in file_in:
-            if line.startswith(">"):
-                seq_name = line.strip()[1:]
-                read_next_line = True
-            elif read_next_line == True:
-                if line.startswith(">"):
-                    sys.stderr.write("There should only be one sequence in the fasta. Exiting...")
-                    sys.exit()
-                seq_list.append(line.strip())
-        file_in.close()
-    seq = ''.join(seq_list)
 
-    return (seq_name, seq)
+
+
+def read_fasta(fasta_file: str) -> dict:
+    """
+    Reads a FASTA file and returns its contents as a dictionary.
+
+    Parameters:
+    fasta_file (str): The file path of the FASTA file.
+
+    Returns:
+    dict: A dictionary where each key-value pair corresponds to a sequence in the FASTA file.
+          The key is the sequence name (header, excluding '>'), and the value is the sequence as a string.
+    """
+
+    # Initialize an empty dictionary to store sequences
+    sequences = {}
+
+    # Variables to keep track of the current sequence name and the sequence data
+    seq_name = None
+    seq_list = []
+
+    # Open the FASTA file for reading
+    with open(fasta_file, "r") as file:
+        for line in file:
+            line = line.strip()  # Remove any leading and trailing whitespace
+
+            if line.startswith(">"):
+                # If a new sequence header is found
+                if seq_name:
+                    # Save the previous sequence to the dictionary
+                    sequences[seq_name] = ''.join(seq_list)
+                    seq_list = []
+                # Update the sequence name, removing the '>'
+                seq_name = line[1:]
+            else:
+                # If it's sequence data, append it to the list
+                seq_list.append(line)
+
+        # Add the last sequence to the dictionary
+        if seq_name:
+            sequences[seq_name] = ''.join(seq_list)
+
+    return sequences
+
+
+
+#def read_fasta(fasta_file):
+#    with open(fasta_file, "r") as file_in:
+#        read_next_line = False
+#        seq_list = []
+#        for line in file_in:
+#            if line.startswith(">"):
+#                seq_name = line.strip()[1:]
+#                read_next_line = True
+#            elif read_next_line == True:
+#                if line.startswith(">"):
+#                    sys.stderr.write("There should only be one sequence in the fasta. Exiting...")
+#                    sys.exit()
+#                seq_list.append(line.strip())
+#        file_in.close()
+#    seq = ''.join(seq_list)
+#
+#    return (seq_name, seq)
 
 def assemble_fragments(list_of_subseqs,
                        min_overlap_len = 15,
