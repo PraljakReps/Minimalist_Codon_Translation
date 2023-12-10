@@ -1,13 +1,12 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 Created on Mon Oct 18 13:16:01 2021
 
 @author: bryanandrews1
 """
 
-import robustness_tools_072921.py as rt
-import DNA_tools as dt 
+import random
+import source.DNA_tools as dt 
+import source.robustness_tools_072921 as rt
 
 ######################
 # Codon optimization #
