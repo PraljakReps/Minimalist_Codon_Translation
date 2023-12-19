@@ -32,4 +32,4 @@ sh run_main.sh
 
 ## Acknowledgements
 
-Hat tip to Bryan Phillips for his generous contribution in sharing his repository, which includes minimalist code for reverse amino acid translation and species-specific codon optimization.
+Hat tip to Bryan Andrews [(dry-brews)](https://github.com/dry-brews) for his generous contribution in sharing his repository, which includes minimalist code for reverse amino acid translation and species-specific codon optimization.
